@@ -530,7 +530,7 @@ jobs:
           key: ${{ runner.os }}-dist-build-${{ github.sha }}
 
       - name: Upload dist artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
         with:
           name: dist-build
           path: dist/
@@ -538,7 +538,7 @@ jobs:
           retention-days: 1
 
       - name: Upload A2UI bundle artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
         with:
           name: canvas-a2ui-bundle
           path: src/canvas-host/a2ui/
@@ -876,14 +876,14 @@ jobs:
 
       - name: Download dist artifact
         if: matrix.task == 'test'
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
         with:
           name: dist-build
           path: dist/
 
       - name: Download A2UI bundle artifact
         if: matrix.task == 'test' || matrix.task == 'channels'
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
         with:
           name: canvas-a2ui-bundle
           path: src/canvas-host/a2ui/
@@ -997,13 +997,13 @@ jobs:
 
       - name: Download dist artifact
         if: matrix.requires_dist == true && steps.dist-cache.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
         with:
           name: dist-build
           path: dist/
 
       - name: Download A2UI bundle artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
         with:
           name: canvas-a2ui-bundle
           path: src/canvas-host/a2ui/
@@ -1351,7 +1351,7 @@ jobs:
 
       - name: Upload gateway watch regression artifacts
         if: always() && matrix.group == 'runtime-topology'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
         with:
           name: gateway-watch-regression
           path: .local/gateway-watch-regression/
@@ -1448,7 +1448,7 @@ jobs:
 
       - name: Download dist artifact
         if: github.event_name == 'push' && steps.build-smoke-dist-cache.outputs.cache-hit != 'true'
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
         with:
           name: dist-build
           path: dist/
@@ -1655,14 +1655,14 @@ jobs:
 
       - name: Download dist artifact
         if: matrix.task == 'test'
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
         with:
           name: dist-build
           path: dist/
 
       - name: Download A2UI bundle artifact
         if: matrix.task == 'test'
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
         with:
           name: canvas-a2ui-bundle
           path: src/canvas-host/a2ui/
