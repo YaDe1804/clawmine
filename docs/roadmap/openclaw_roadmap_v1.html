@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw — Roadmap</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f1117;
+    color: #d3d1c7;
+    padding: 2rem;
+    line-height: 1.6;
+  }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; color: #f0ede6; }
+  .subtitle { font-size: 14px; color: #73726c; margin-bottom: 2rem; }
+
+  /* Stack pills */
+  .stack-status { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; }
+  .stack-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    border: 0.5px solid #3a3a36; color: #9c9a92;
+    display: flex; align-items: center; gap: 5px; background: #1a1a1f;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot-active   { background: #5DCAA5; }
+  .dot-next     { background: #7F77DD; }
+  .dot-security { background: #DD4444; }
+  .dot-planned  { background: #3a3a50; }
+
+  .section-label {
+    font-size: 11px; font-weight: 500; color: #5f5e5a;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+  }
+  .divider { border: none; border-top: 0.5px solid #2e2e2a; margin: 8px 0 24px; }
+
+  /* Phase headers */
+  .phase-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .phase-badge {
+    font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 20px; white-space: nowrap; display: inline-block;
+  }
+  .p0 .phase-badge { background: #1a2030; color: #7799CC; }
+  .p1 .phase-badge { background: #04342C; color: #5DCAA5; }
+  .p2 .phase-badge { background: #042C53; color: #85B7EB; }
+  .p3 .phase-badge { background: #26215C; color: #AFA9EC; }
+  .p4 .phase-badge { background: #412402; color: #FAC775; }
+  .p5 .phase-badge { background: #2e1a0a; color: #F0997B; }
+  .psec .phase-badge { background: #3a0a0a; color: #EF7777; }
+
+  .phase-title { font-size: 15px; font-weight: 500; color: #f0ede6; }
+  .phase-sub   { font-size: 12px; color: #73726c; margin-top: 2px; }
+  .phase-status { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; margin-top: 5px; display: inline-block; }
+  .status-done    { background: #04342C; color: #5DCAA5; }
+  .status-active  { background: #1a2030; color: #85B7EB; }
+  .status-next    { background: #26215C; color: #AFA9EC; }
+  .status-planned { background: #2e2e2a; color: #73726c; }
+  .status-gate    { background: #3a0a0a; color: #EF7777; }
+
+  /* Cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 8px; margin-bottom: 24px;
+  }
+  .card {
+    background: #1a1a1f; border: 0.5px solid #3a3a36;
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .card.done    { background: #0a1f18; border-color: #0F6E56; }
+  .card.done .card-label { color: #5DCAA5; }
+  .card.done .card-label::after { content: " ✓"; color: #1D9E75; font-size: 12px; }
+  .card.active  { background: #0d1826; border-color: #1a4a7a; }
+  .card.active .card-label { color: #85B7EB; }
+  .card.next    { background: #12122a; border-color: #3a3560; }
+  .card.next .card-label { color: #AFA9EC; }
+  .card.security { background: #1f0a0a; border: 0.5px solid #7a2020; }
+  .card.security .card-label { color: #EF7777; }
+  .card.warn    { background: #1f1400; border: 0.5px solid #7a5000; }
+  .card.warn .card-label { color: #FAC775; }
+  .card-label { font-size: 13px; font-weight: 500; color: #d3d1c7; margin-bottom: 5px; }
+  .card-desc  { font-size: 11px; color: #73726c; line-height: 1.5; }
+  .card-note  { font-size: 10px; color: #1D9E75; margin-top: 5px; font-style: italic; }
+  .card-note-warn { font-size: 10px; color: #EF9F27; margin-top: 5px; font-style: italic; }
+  .card-note-security { font-size: 10px; color: #EF7777; margin-top: 5px; font-style: italic; }
+  .card-tag {
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    border-radius: 10px; margin-top: 8px; font-weight: 500;
+  }
+  .tag-security { background: #3a0a0a; color: #EF7777; }
+  .tag-infra    { background: #2e1a0a; color: #F0997B; }
+  .tag-quality  { background: #042C53; color: #85B7EB; }
+  .tag-gateway  { background: #04342C; color: #5DCAA5; }
+  .tag-channels { background: #26215C; color: #AFA9EC; }
+  .tag-dx       { background: #412402; color: #FAC775; }
+
+  /* ADR log */
+  .adr-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+  .adr-pill {
+    font-size: 10px; padding: 3px 9px; border-radius: 10px;
+    background: #1a1a1f; color: #73726c; border: 0.5px solid #3a3a36;
+  }
+  .adr-pill.done { background: #0a1f18; color: #5DCAA5; border-color: #0F6E56; }
+  .adr-pill.active { background: #0d1826; color: #85B7EB; border-color: #1a4a7a; }
+
+  /* Security gate box */
+  .gate-box {
+    background: #1f0a0a; border: 0.5px solid #7a2020;
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px;
+  }
+  .gate-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 10px; color: #EF7777; }
+  .gate-box p  { color: #9c9a92; line-height: 1.6; margin-bottom: 8px; }
+  .gate-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; }
+  .gate-dot       { width: 6px; height: 6px; border-radius: 50%; background: #EF7777; margin-top: 5px; flex-shrink: 0; }
+  .gate-dot-done  { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; margin-top: 5px; flex-shrink: 0; }
+  .gate-text { color: #9c9a92; line-height: 1.5; }
+
+  /* Info box */
+  .info-box {
+    background: #0d1520; border: 0.5px solid #1a3a5a;
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px;
+  }
+  .info-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 10px; color: #85B7EB; }
+  .info-box p  { color: #9c9a92; line-height: 1.7; }
+  .info-box strong { color: #d3d1c7; }
+
+  @media print {
+    body { background: #0f1117; padding: 1.5rem; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw 🦞 — Roadmap</h1>
+<p class="subtitle">TypeScript · Node.js · Multi-Channel AI Gateway · Enterprise Grade · Stand: April 2026 · v1.0</p>
+
+<!-- Tech Stack Pills -->
+<div class="section-label">Tech Stack</div>
+<div class="stack-status">
+  <div class="stack-pill"><span class="dot dot-active"></span> TypeScript / Node.js ESM</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> Gateway (HTTP + SSE)</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> 20+ Channels (WhatsApp, Telegram, Discord …)</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> Plugin SDK</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> Auth Rate Limiter (Sliding Window)</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> Prompt Injection Detection</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> CodeQL + Dependabot</div>
+  <div class="stack-pill"><span class="dot dot-next"></span> Zod + AJV Input Validation</div>
+  <div class="stack-pill"><span class="dot dot-planned"></span> GitHub Actions SHA-Pinning</div>
+  <div class="stack-pill"><span class="dot dot-planned"></span> CSP Nonce-basiert</div>
+</div>
+
+<!-- ADR Log -->
+<div class="section-label">ADR-Log</div>
+<div class="adr-list">
+  <span class="adr-pill done">ADR-001 GitHub Actions SHA-Pinning</span>
+  <span class="adr-pill done">ADR-002 CSP unsafe-inline Abschaffung</span>
+  <span class="adr-pill done">ADR-003 HSTS Default-on</span>
+  <span class="adr-pill done">ADR-004 Error Logging Strategie</span>
+  <span class="adr-pill">ADR-005 Dependency Audit Policy</span>
+  <span class="adr-pill">ADR-006 Secret Scanning Integration</span>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 0: Baseline Audit -->
+<div class="phase-header p0">
+  <div>
+    <span class="phase-badge">Phase 0 — Abgeschlossen</span>
+    <div class="phase-title">Security &amp; Quality Baseline Audit</div>
+    <div class="phase-sub">Vollständiger Audit des bestehenden Codebases gegen Enterprise-Anforderungen</div>
+    <span class="phase-status status-done">Abgeschlossen · April 2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done">
+    <div class="card-label">Codebase-Analyse</div>
+    <div class="card-desc">15.000+ Dateien durchsucht · Struktur, Tech Stack, Abhängigkeiten kartiert</div>
+    <div class="card-note">April 2026 · vollständig</div>
+    <span class="card-tag tag-infra">Infra</span>
+  </div>
+  <div class="card done">
+    <div class="card-label">Auth &amp; Rate Limiting</div>
+    <div class="card-desc">Sliding-Window Limiter · IP-Lockout · Scope-getrennte Zähler · loopback-exempt</div>
+    <div class="card-note">Solide implementiert ✓</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card done">
+    <div class="card-label">Prompt Injection Detection</div>
+    <div class="card-desc">15+ Patterns · kryptografische Boundary-Marker mit randomBytes(8) · externe Inhalte isoliert</div>
+    <div class="card-note">Enterprise-tauglich ✓</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card done">
+    <div class="card-label">HTTP Security Headers</div>
+    <div class="card-desc">X-Content-Type-Options · Referrer-Policy · Permissions-Policy · X-Frame-Options · CSP mit SHA-256</div>
+    <div class="card-note">Basis solide · style-src Problem offen</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card done">
+    <div class="card-label">Docker Security</div>
+    <div class="card-desc">Multi-Stage Build · SHA256-gepinnte Base Images · USER node · HEALTHCHECK</div>
+    <div class="card-note">Enterprise-tauglich ✓</div>
+    <span class="card-tag tag-infra">Infra</span>
+  </div>
+  <div class="card done">
+    <div class="card-label">CI/CD Analyse</div>
+    <div class="card-desc">CodeQL aktiv · Dependabot täglich · permissions: contents: read · Zizmor-Config analysiert</div>
+    <div class="card-note">Lücken dokumentiert</div>
+    <span class="card-tag tag-infra">Infra</span>
+  </div>
+  <div class="card done">
+    <div class="card-label">Findings Dokumentiert</div>
+    <div class="card-desc">3 High · 4 Medium · 3 Low/Quality · Priorisierung abgeschlossen · ADRs erstellt</div>
+    <div class="card-note">Roadmap basiert auf Findings</div>
+    <span class="card-tag tag-quality">Quality</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 1: Critical Security Fixes -->
+<div class="phase-header psec">
+  <div>
+    <span class="phase-badge">Phase 1 — Aktiv</span>
+    <div class="phase-title">Critical Security Fixes</div>
+    <div class="phase-sub">Alle High-Severity Findings aus dem Baseline Audit schließen</div>
+    <span class="phase-status status-active">In Bearbeitung</span>
+  </div>
+</div>
+
+<!-- Security Gate Box -->
+<div class="gate-box">
+  <h3>🔒 Security Gate — Pflicht vor Phase 2</h3>
+  <p>Alle High-Severity Findings müssen geschlossen und per ADR dokumentiert sein, bevor Feature-Arbeit (Phase 2+) beginnt.</p>
+  <div class="gate-row"><span class="gate-dot"></span><span class="gate-text"><strong>fix2.py + Root-Clutter</strong> — temporäre Skripte und Dream-Diary HTML-Dateien aus Repo-Root entfernen</span></div>
+  <div class="gate-row"><span class="gate-dot"></span><span class="gate-text"><strong>GitHub Actions SHA-Pinning</strong> — alle <code>actions/*@vX</code> auf SHA-Hash-Pins migrieren (ADR-001)</span></div>
+  <div class="gate-row"><span class="gate-dot"></span><span class="gate-text"><strong>Zizmor-Regeln aktivieren</strong> — <code>unpinned-uses</code> und <code>excessive-permissions</code> in <code>zizmor.yml</code> einschalten</span></div>
+  <div class="gate-row"><span class="gate-dot"></span><span class="gate-text"><strong>CSP unsafe-inline entfernen</strong> — <code>style-src</code> auf Hash- oder Nonce-basierte Lösung migrieren (ADR-002)</span></div>
+</div>
+
+<div class="cards">
+  <div class="card warn">
+    <div class="card-label">fix2.py entfernen</div>
+    <div class="card-desc">Temporäres Migrationsskript liegt committed im Root — kein Platz in einem Enterprise-Repo</div>
+    <div class="card-note-warn">Offen · sofort</div>
+    <span class="card-tag tag-quality">Quality</span>
+  </div>
+  <div class="card warn">
+    <div class="card-label">Dream-Diary HTMLs entfernen</div>
+    <div class="card-desc">dream-diary-preview-v2.html + v3.html im Root — WIP-Artefakte gehören nicht ins Repo</div>
+    <div class="card-note-warn">Offen · sofort</div>
+    <span class="card-tag tag-quality">Quality</span>
+  </div>
+  <div class="card security">
+    <div class="card-label">GitHub Actions SHA-Pinning</div>
+    <div class="card-desc">actions/checkout@v6 → @sha · alle Workflows · pin-github-actions Tool nutzen · ADR-001</div>
+    <div class="card-note-security">Supply Chain Risiko · High</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card security">
+    <div class="card-label">Zizmor Regeln aktivieren</div>
+    <div class="card-desc">unpinned-uses + excessive-permissions in zizmor.yml einschalten · CI-Gate hinzufügen</div>
+    <div class="card-note-security">Audit-Lücke · High</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card security">
+    <div class="card-label">CSP unsafe-inline entfernen</div>
+    <div class="card-desc">style-src 'unsafe-inline' → Hash-basiert oder Nonce · buildControlUiCspHeader anpassen · ADR-002</div>
+    <div class="card-note-security">CSS Injection Risiko · High</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 2: Medium Security Hardening -->
+<div class="phase-header p2">
+  <div>
+    <span class="phase-badge">Phase 2 — Geplant</span>
+    <div class="phase-title">Security Hardening</div>
+    <div class="phase-sub">Medium-Severity Findings + Observability für Incident Response</div>
+    <span class="phase-status status-planned">Geplant · nach Phase 1 Gate</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card">
+    <div class="card-label">HSTS Default-on</div>
+    <div class="card-desc">Strict-Transport-Security standardmäßig aktiviert statt opt-in · ADR-003</div>
+    <div class="card-note-warn">Medium · HSTS opt-in unsicher</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Error Logging Strategy</div>
+    <div class="card-desc">catch(() => {}) Pattern (~15x in fs-safe.ts) · Cleanup-Fehler mit logger.debug() loggen · ADR-004</div>
+    <div class="card-note-warn">Medium · Incident Response blind</div>
+    <span class="card-tag tag-quality">Quality</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Dockerfile Bun-Install</div>
+    <div class="card-desc">curl | bash durch verifiziertes Binary oder offizielles Bun-Image ersetzen</div>
+    <div class="card-note-warn">Medium · Build Supply Chain</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Workflow Permissions Audit</div>
+    <div class="card-desc">Alle GitHub Workflow Jobs auf minimale Rechte prüfen · per-job permissions setzen</div>
+    <div class="card-note-warn">Medium · Least Privilege</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card">
+    <div class="card-label">unhandledRejection Handler</div>
+    <div class="card-desc">Globaler Error Boundary im Entry Point · unbehandelte Rejections loggen statt crash</div>
+    <span class="card-tag tag-quality">Quality</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Dependency Audit Policy</div>
+    <div class="card-desc">npm audit in CI als Gate · Severity-Threshold definieren · ADR-005</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 3: Quality & Developer Experience -->
+<div class="phase-header p3">
+  <div>
+    <span class="phase-badge">Phase 3 — Geplant</span>
+    <div class="phase-title">Code Quality &amp; Developer Experience</div>
+    <div class="phase-sub">Enterprise-grade Codestandards · Testabdeckung · Dokumentation</div>
+    <span class="phase-status status-planned">Geplant</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card">
+    <div class="card-label">Test Coverage Gate</div>
+    <div class="card-desc">Minimum Coverage in CI erzwingen · kritische Pfade (auth, security, gateway) 90%+</div>
+    <span class="card-tag tag-quality">Quality</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Secret Scanning CI</div>
+    <div class="card-desc">detect-secrets in CI-Pipeline integrieren · .detect-secrets.cfg korrekt verdrahten · ADR-006</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Architecture Docs</div>
+    <div class="card-desc">docs/architecture/overview.md · Komponenten · Datenfluss · Security-Schichten</div>
+    <span class="card-tag tag-quality">Quality</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Root Cleanup Policy</div>
+    <div class="card-desc">CONTRIBUTING.md Regel: keine temporären Skripte im Root · Pre-commit Hook</div>
+    <span class="card-tag tag-dx">DX</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Structured Logging</div>
+    <div class="card-desc">JSON-Logs mit Trace-IDs für alle Gateway-Requests · Request-ID Header</div>
+    <span class="card-tag tag-gateway">Gateway</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Changelog Automation</div>
+    <div class="card-desc">Conventional Commits · automatisches CHANGELOG via CI · Release-Tags</div>
+    <span class="card-tag tag-dx">DX</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 4: Gateway Enterprise Features -->
+<div class="phase-header p4">
+  <div>
+    <span class="phase-badge">Phase 4 — Geplant</span>
+    <div class="phase-title">Gateway Enterprise Features</div>
+    <div class="phase-sub">Multi-Tenant · Observability · High Availability</div>
+    <span class="phase-status status-planned">Geplant</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card">
+    <div class="card-label">Metrics Endpoint</div>
+    <div class="card-desc">Prometheus-kompatibler /metrics Endpunkt · Request-Rate, Auth-Failures, Channel-Health</div>
+    <span class="card-tag tag-gateway">Gateway</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Distributed Rate Limiting</div>
+    <div class="card-desc">Redis-backed Rate Limiter für Multi-Instance Deployments · In-Memory bleibt als Fallback</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card">
+    <div class="card-label">OpenTelemetry</div>
+    <div class="card-desc">Traces · Spans · Jaeger / Tempo Integration · diagnostics-otel Extension</div>
+    <span class="card-tag tag-infra">Infra</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Health Check API</div>
+    <div class="card-desc">Detaillierter /health Endpunkt · Channel-Status · DB-Verbindungen · upstream AI APIs</div>
+    <span class="card-tag tag-gateway">Gateway</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Audit Log</div>
+    <div class="card-desc">Alle Security-Events (Auth-Failures, Config-Changes, Dangerous Flags) persistent loggen</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Multi-Instance Session Store</div>
+    <div class="card-desc">Sessions extern speichern · Horizontal Scaling vorbereiten</div>
+    <span class="card-tag tag-gateway">Gateway</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 5: Channel Hardening -->
+<div class="phase-header p5">
+  <div>
+    <span class="phase-badge">Phase 5 — Geplant</span>
+    <div class="phase-title">Channel Security Hardening</div>
+    <div class="phase-sub">Webhook-Verifizierung · Channel-spezifische Sicherheitsreviews</div>
+    <span class="phase-status status-planned">Geplant</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card">
+    <div class="card-label">Webhook HMAC Audit</div>
+    <div class="card-desc">Alle Webhook-Endpunkte auf korrekte HMAC-Verifizierung prüfen · Telegram · Discord · Slack</div>
+    <span class="card-tag tag-security">Security</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Channel Input Sanitization</div>
+    <div class="card-desc">Eingehende Nachrichten aller Channels durch einheitlichen Sanitizer · Zod-Schema pro Channel</div>
+    <span class="card-tag tag-channels">Channels</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Channel Isolation</div>
+    <div class="card-desc">Channel-Fehler isolieren · ein fehlerhafter Channel darf Gateway nicht destabilisieren</div>
+    <span class="card-tag tag-channels">Channels</span>
+  </div>
+  <div class="card">
+    <div class="card-label">Token Rotation API</div>
+    <div class="card-desc">Channel-Tokens ohne Gateway-Neustart rotieren · Graceful credential handover</div>
+    <span class="card-tag tag-channels">Channels</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Open Findings Summary -->
+<div class="section-label">Offene Findings (aus Audit)</div>
+<div class="cards">
+  <div class="card security">
+    <div class="card-label">🔴 fix2.py im Root</div>
+    <div class="card-desc">Temporäres Migrationsskript committed · kein Enterprise Standard</div>
+    <div class="card-note-security">Phase 1 · sofort</div>
+  </div>
+  <div class="card security">
+    <div class="card-label">🔴 Actions nicht SHA-gepinnt</div>
+    <div class="card-desc">actions/checkout@v6 — Supply Chain Angriff möglich · zizmor disabled</div>
+    <div class="card-note-security">Phase 1 · ADR-001</div>
+  </div>
+  <div class="card security">
+    <div class="card-label">🔴 CSP unsafe-inline (Styles)</div>
+    <div class="card-desc">style-src 'unsafe-inline' erlaubt CSS Injection / Datenexfiltration</div>
+    <div class="card-note-security">Phase 1 · ADR-002</div>
+  </div>
+  <div class="card warn">
+    <div class="card-label">🟡 HSTS opt-in</div>
+    <div class="card-desc">Strict-Transport-Security nicht standardmäßig aktiv · ADR-003</div>
+    <div class="card-note-warn">Phase 2</div>
+  </div>
+  <div class="card warn">
+    <div class="card-label">🟡 Silent catch(() => {})</div>
+    <div class="card-desc">~15x in fs-safe.ts · Cleanup-Fehler nicht geloggt · Incident Response blind</div>
+    <div class="card-note-warn">Phase 2 · ADR-004</div>
+  </div>
+  <div class="card warn">
+    <div class="card-label">🟡 Bun curl|bash in Dockerfile</div>
+    <div class="card-desc">Bun-Installation via ungepinntem Shell-Script im Build-Stage</div>
+    <div class="card-note-warn">Phase 2</div>
+  </div>
+  <div class="card warn">
+    <div class="card-label">🟡 excessive-permissions disabled</div>
+    <div class="card-desc">Workflow-Berechtigungen werden nicht geprüft · zizmor Regel deaktiviert</div>
+    <div class="card-note-warn">Phase 2</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Info Box -->
+<div class="info-box">
+  <h3>Projekt-Philosophie</h3>
+  <p>OpenClaw wird nach dem Prinzip <strong>Security First</strong> weiterentwickelt. Jede architektonische Entscheidung wird per ADR dokumentiert. Alle Security-Findings aus dem Baseline Audit werden vor neuen Features abgearbeitet. <strong>Enterprise Grade bedeutet: vollständige Nachvollziehbarkeit, minimale Angriffsfläche, keine stillen Fehler.</strong></p>
+</div>
+
+</body>
+</html>

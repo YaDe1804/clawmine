@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw — Roadmap</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f1117;
+    color: #d3d1c7;
+    padding: 2rem;
+    line-height: 1.6;
+  }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; color: #f0ede6; }
+  .subtitle { font-size: 14px; color: #73726c; margin-bottom: 2rem; }
+
+  .stack-status { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; }
+  .stack-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    border: 0.5px solid #3a3a36; color: #9c9a92;
+    display: flex; align-items: center; gap: 5px; background: #1a1a1f;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot-active   { background: #5DCAA5; }
+  .dot-next     { background: #7F77DD; }
+  .dot-security { background: #DD4444; }
+  .dot-planned  { background: #3a3a50; }
+
+  .section-label {
+    font-size: 11px; font-weight: 500; color: #5f5e5a;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+  }
+  .divider { border: none; border-top: 0.5px solid #2e2e2a; margin: 8px 0 24px; }
+
+  .phase-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .phase-badge {
+    font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 20px; white-space: nowrap; display: inline-block;
+  }
+  .p0 .phase-badge { background: #04342C; color: #5DCAA5; }
+  .p1 .phase-badge { background: #04342C; color: #5DCAA5; }
+  .p2 .phase-badge { background: #04342C; color: #5DCAA5; }
+  .pclean .phase-badge { background: #04342C; color: #5DCAA5; }
+  .p3 .phase-badge { background: #042C53; color: #85B7EB; }
+  .p4 .phase-badge { background: #26215C; color: #AFA9EC; }
+  .p5 .phase-badge { background: #412402; color: #FAC775; }
+  .p6 .phase-badge { background: #2e1a0a; color: #F0997B; }
+
+  .phase-title { font-size: 15px; font-weight: 500; color: #f0ede6; }
+  .phase-sub   { font-size: 12px; color: #73726c; margin-top: 2px; }
+  .phase-status { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; margin-top: 5px; display: inline-block; }
+  .status-done    { background: #04342C; color: #5DCAA5; }
+  .status-active  { background: #1a2030; color: #85B7EB; }
+  .status-next    { background: #26215C; color: #AFA9EC; }
+  .status-planned { background: #2e2e2a; color: #73726c; }
+  .status-debt    { background: #2e1a0a; color: #F0997B; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 8px; margin-bottom: 24px;
+  }
+  .card {
+    background: #1a1a1f; border: 0.5px solid #3a3a36;
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .card.done    { background: #0a1f18; border-color: #0F6E56; }
+  .card.done .card-label { color: #5DCAA5; }
+  .card.done .card-label::after { content: " ✓"; color: #1D9E75; font-size: 12px; }
+  .card.active  { background: #0d1826; border-color: #1a4a7a; }
+  .card.active .card-label { color: #85B7EB; }
+  .card.next    { background: #12122a; border-color: #3a3560; }
+  .card.next .card-label { color: #AFA9EC; }
+  .card.debt    { background: #1a1200; border-color: #5a4000; }
+  .card.debt .card-label { color: #F0997B; }
+  .card-label { font-size: 13px; font-weight: 500; color: #d3d1c7; margin-bottom: 5px; }
+  .card-desc  { font-size: 11px; color: #73726c; line-height: 1.5; }
+  .card-note  { font-size: 10px; color: #1D9E75; margin-top: 5px; font-style: italic; }
+  .card-note-warn { font-size: 10px; color: #EF9F27; margin-top: 5px; font-style: italic; }
+  .card-note-debt { font-size: 10px; color: #F0997B; margin-top: 5px; font-style: italic; }
+  .card-tag {
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    border-radius: 10px; margin-top: 8px; font-weight: 500;
+  }
+  .tag-security { background: #3a0a0a; color: #EF7777; }
+  .tag-infra    { background: #2e1a0a; color: #F0997B; }
+  .tag-quality  { background: #042C53; color: #85B7EB; }
+  .tag-gateway  { background: #04342C; color: #5DCAA5; }
+  .tag-channels { background: #26215C; color: #AFA9EC; }
+  .tag-dx       { background: #412402; color: #FAC775; }
+  .tag-memory   { background: #1a0a2e; color: #C084FC; }
+
+  .adr-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+  .adr-pill {
+    font-size: 10px; padding: 3px 9px; border-radius: 10px;
+    background: #1a1a1f; color: #73726c; border: 0.5px solid #3a3a36;
+  }
+  .adr-pill.done { background: #0a1f18; color: #5DCAA5; border-color: #0F6E56; }
+
+  .debt-box {
+    background: #1a1200; border: 0.5px solid #5a4000;
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px;
+  }
+  .debt-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 10px; color: #F0997B; }
+  .debt-box p  { color: #9c9a92; line-height: 1.6; margin-bottom: 6px; }
+  .debt-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 5px; }
+  .debt-dot { width: 6px; height: 6px; border-radius: 50%; background: #F0997B; margin-top: 5px; flex-shrink: 0; }
+  .debt-text { color: #9c9a92; line-height: 1.5; }
+
+  .info-box {
+    background: #0d1520; border: 0.5px solid #1a3a5a;
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px;
+  }
+  .info-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 10px; color: #85B7EB; }
+  .info-box p  { color: #9c9a92; line-height: 1.7; }
+  .info-box strong { color: #d3d1c7; }
+
+  @media print {
+    body { background: #0f1117; padding: 1.5rem; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw 🦞 — Roadmap</h1>
+<p class="subtitle">TypeScript · Node.js · Multi-Channel AI Gateway · Windows + Linux · Stand: April 2026 · v2.0</p>
+
+<!-- Tech Stack Pills -->
+<div class="section-label">Tech Stack</div>
+<div class="stack-status">
+  <div class="stack-pill"><span class="dot dot-active"></span> TypeScript / Node.js ESM</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> Gateway (HTTP + SSE)</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> 20+ Channels (WhatsApp, Telegram, Discord …)</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> Plugin SDK</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> SHA-gepinnte CI/CD Pipeline</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> Auth Rate Limiter (Sliding Window)</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> Prompt Injection Detection</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> CSP Hash-basiert (Script + Style)</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> HSTS Default-on</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> memory-lancedb (RAG / Long-term Memory)</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> diagnostics-otel (Observability)</div>
+  <div class="stack-pill"><span class="dot dot-planned"></span> detect-secrets CI-Gate</div>
+</div>
+
+<!-- ADR Log -->
+<div class="section-label">ADR-Log</div>
+<div class="adr-list">
+  <span class="adr-pill done">ADR-001 GitHub Actions SHA-Pinning</span>
+  <span class="adr-pill done">ADR-002 CSP unsafe-inline Abschaffung</span>
+  <span class="adr-pill done">ADR-003 HSTS Default-on</span>
+  <span class="adr-pill done">ADR-004 Error Logging Strategie</span>
+  <span class="adr-pill">ADR-005 Dependency Audit Policy</span>
+  <span class="adr-pill">ADR-006 Secret Scanning Integration</span>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 0: Baseline Audit -->
+<div class="phase-header p0">
+  <div>
+    <span class="phase-badge">Phase 0 — Abgeschlossen</span>
+    <div class="phase-title">Security &amp; Quality Baseline Audit</div>
+    <div class="phase-sub">Vollständiger Audit des bestehenden Codebases gegen Enterprise-Anforderungen</div>
+    <span class="phase-status status-done">Abgeschlossen · 22.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">Codebase-Analyse</div><div class="card-desc">15.000+ Dateien · Struktur, Tech Stack, Abhängigkeiten kartiert</div><div class="card-note">22.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Auth &amp; Rate Limiting</div><div class="card-desc">Sliding-Window · IP-Lockout · Scope-getrennte Zähler · loopback-exempt</div><div class="card-note">Solide ✓</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Prompt Injection Detection</div><div class="card-desc">15+ Patterns · kryptografische Boundary-Marker · externe Inhalte isoliert</div><div class="card-note">Enterprise-tauglich ✓</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">HTTP Security Headers</div><div class="card-desc">X-Content-Type-Options · Referrer-Policy · Permissions-Policy · X-Frame-Options</div><div class="card-note">Basis solide · Lücken dokumentiert</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Docker Security</div><div class="card-desc">Multi-Stage · SHA256-gepinnte Base Images · USER node · HEALTHCHECK</div><div class="card-note">Enterprise-tauglich ✓</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">SEQU-Initial erstellt</div><div class="card-desc">Vollständiger Security &amp; Quality Check · 0 Kritisch · 3 High · 4 Medium · 3 Low</div><div class="card-note">22.04.2026 · CONDITIONAL PASS</div><span class="card-tag tag-quality">Quality</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 1: Critical Security Fixes -->
+<div class="phase-header p1">
+  <div>
+    <span class="phase-badge">Phase 1 — Abgeschlossen</span>
+    <div class="phase-title">Critical Security Fixes</div>
+    <div class="phase-sub">Alle High-Severity Findings aus dem Baseline Audit geschlossen</div>
+    <span class="phase-status status-done">Abgeschlossen · 22.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">fix2.py + Root-Clutter</div><div class="card-desc">fix2.py · dream-diary-preview-v2/v3.html aus Root gelöscht</div><div class="card-note">22.04.2026</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card done"><div class="card-label">GitHub Actions SHA-Pinning</div><div class="card-desc">18 Workflows · 15 Actions auf SHA-Hashes gepinnt · ADR-001</div><div class="card-note">22.04.2026 · Supply Chain gesichert</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Zizmor Gates reaktiviert</div><div class="card-desc">unpinned-uses · excessive-permissions · artipacked — alle auf disable: false</div><div class="card-note">22.04.2026 · ADR-001</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">CSP unsafe-inline entfernt</div><div class="card-desc">computeInlineStyleHashes · style-src hash-basiert · kein unsafe-inline mehr · ADR-002</div><div class="card-note">22.04.2026 · Tests aktualisiert</div><span class="card-tag tag-security">Security</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 2: Hardening -->
+<div class="phase-header p2">
+  <div>
+    <span class="phase-badge">Phase 2 — Abgeschlossen</span>
+    <div class="phase-title">Security Hardening</div>
+    <div class="phase-sub">Medium-Severity Findings + Observability für Incident Response</div>
+    <span class="phase-status status-done">Abgeschlossen · 22.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">HSTS Default-on</div><div class="card-desc">max-age=63072000; includeSubDomains · nur bei TLS · opt-out via false · ADR-003</div><div class="card-note">22.04.2026</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Error Logging</div><div class="card-desc">23× catch(() => {}) → logger.debug() · unhandledRejection + uncaughtException Handler · ADR-004</div><div class="card-note">22.04.2026 · fs-safe.ts vollständig</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card done"><div class="card-label">Dockerfile Bun abgesichert</div><div class="card-desc">curl|bash entfernt · COPY --from=oven/bun:1 · kein Shell-Pipe mehr</div><div class="card-note">22.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Workflow-Permissions Audit</div><div class="card-desc">Alle Jobs via Zizmor excessive-permissions Gate geprüft</div><div class="card-note">22.04.2026</div><span class="card-tag tag-security">Security</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Platform + Extension Cleanup -->
+<div class="phase-header pclean">
+  <div>
+    <span class="phase-badge">Cleanup — Abgeschlossen</span>
+    <div class="phase-title">Platform &amp; Extension Cleanup</div>
+    <div class="phase-sub">iOS/macOS entfernt · QA-Infrastruktur entfernt · Windows + Linux</div>
+    <span class="phase-status status-done">Abgeschlossen · 22.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">iOS/macOS komplett entfernt</div><div class="card-desc">apps/ios/ · apps/macos/ · Workflows · Docs · AGENTS.md bereinigt</div><div class="card-note">22.04.2026 · Windows + Linux only</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">QA-Extensions entfernt</div><div class="card-desc">qa-channel · qa-lab · qa-matrix · parity-gate.yml · Docs bereinigt</div><div class="card-note">22.04.2026 · Scope erledigt</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Enterprise Security Standards</div><div class="card-desc">AGENTS.md: Root-Policy · Actions-Pinning · CSP · Error Handling · ADR-Pflicht · Platform</div><div class="card-note">22.04.2026 · Guardrails aktiv</div><span class="card-tag tag-dx">DX</span></div>
+  <div class="card debt"><div class="card-label">TD-001 · QA Dead Code</div><div class="card-desc">~350 Treffer in ~100 Dateien · SDK-Facades · CLI · Scripts · Tests · Registries</div><div class="card-note-debt">Bewusst offen · kein Laufzeit-Impact · dedizierte Session</div><span class="card-tag tag-infra">Infra</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Tech Debt Box -->
+<div class="debt-box">
+  <h3>⚠ Technische Schuld — TD-001</h3>
+  <p>QA-Extensions sind entfernt, aber Dead-Code-Referenzen bleiben bewusst im Core (~350 Treffer / ~100 Dateien). Kein Laufzeit-Risiko, kein Security-Impact. Wird in einer dedizierten Refactoring-Session vollständig bereinigt wenn das Repo stabil läuft.</p>
+  <div class="debt-row"><span class="debt-dot"></span><span class="debt-text">src/plugin-sdk/qa-lab.ts · qa-channel.ts · qa-runtime.ts · qa-runner-runtime.ts — Dead-Code-Facades</span></div>
+  <div class="debt-row"><span class="debt-dot"></span><span class="debt-text">src/cli/program/private-qa-cli.ts · scripts/qa-lab-up.ts · scripts/qa-e2e.ts</span></div>
+  <div class="debt-row"><span class="debt-dot"></span><span class="debt-text">qa/scenarios/** · .agents/skills/openclaw-qa-testing/ · Registry-JSONs · generierte Dateien</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 3: Quality -->
+<div class="phase-header p3">
+  <div>
+    <span class="phase-badge">Phase 3 — Aktiv</span>
+    <div class="phase-title">Memory / RAG + Code Quality</div>
+    <div class="phase-sub">memory-lancedb einrichten · detect-secrets CI · Dokumentation</div>
+    <span class="phase-status status-active">Aktiv</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card next"><div class="card-label">memory-lancedb konfigurieren</div><div class="card-desc">LanceDB-Vektordatenbank · Auto-Recall aus Gesprächen · Embeddings · lokale Persistenz</div><div class="card-note-warn">Nächster Schritt</div><span class="card-tag tag-memory">Memory</span></div>
+  <div class="card next"><div class="card-label">memory-core aktivieren</div><div class="card-desc">Session-Verlauf-Suche · Basis für RAG · läuft ohne externe Abhängigkeit</div><span class="card-tag tag-memory">Memory</span></div>
+  <div class="card"><div class="card-label">Secret Scanning CI</div><div class="card-desc">detect-secrets in CI-Pipeline verdrahten · .detect-secrets.cfg als aktives Gate · ADR-006</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">Architecture Docs</div><div class="card-desc">docs/architecture/overview.md · Komponenten · Datenfluss · Security-Schichten</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card"><div class="card-label">Root Cleanup Policy</div><div class="card-desc">CONTRIBUTING.md Regel · Pre-commit Hook gegen temporäre Skripte im Root</div><span class="card-tag tag-dx">DX</span></div>
+  <div class="card"><div class="card-label">Changelog Automation</div><div class="card-desc">Conventional Commits · automatisches CHANGELOG via CI · Release-Tags</div><span class="card-tag tag-dx">DX</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 4: Enterprise Features -->
+<div class="phase-header p4">
+  <div>
+    <span class="phase-badge">Phase 4 — Geplant</span>
+    <div class="phase-title">Gateway Enterprise Features</div>
+    <div class="phase-sub">Observability · High Availability · Audit Trail</div>
+    <span class="phase-status status-planned">Geplant</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card"><div class="card-label">OpenTelemetry / diagnostics-otel</div><div class="card-desc">Traces · Spans · Jaeger / Tempo Integration · Audit Trail für Pentest-Reports</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card"><div class="card-label">Metrics Endpoint</div><div class="card-desc">Prometheus-kompatibler /metrics · Request-Rate · Auth-Failures · Channel-Health</div><span class="card-tag tag-gateway">Gateway</span></div>
+  <div class="card"><div class="card-label">Distributed Rate Limiting</div><div class="card-desc">Redis-backed Rate Limiter für Multi-Instance · In-Memory bleibt Fallback</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">Health Check API</div><div class="card-desc">Detaillierter /health · Channel-Status · DB-Verbindungen · upstream AI APIs</div><span class="card-tag tag-gateway">Gateway</span></div>
+  <div class="card"><div class="card-label">Audit Log</div><div class="card-desc">Security-Events persistent loggen · Auth-Failures · Config-Changes · Dangerous Flags</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">TD-001 QA Dead Code</div><div class="card-desc">Vollständige Kaskaden-Bereinigung der QA-Referenzen im Core · ~1–2 Tage Aufwand</div><span class="card-tag tag-infra">Infra</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 5: Channel Hardening -->
+<div class="phase-header p5">
+  <div>
+    <span class="phase-badge">Phase 5 — Geplant</span>
+    <div class="phase-title">Channel Security Hardening</div>
+    <div class="phase-sub">Webhook-Verifizierung · Channel-spezifische Sicherheitsreviews</div>
+    <span class="phase-status status-planned">Geplant</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card"><div class="card-label">Webhook HMAC Audit</div><div class="card-desc">Alle Webhook-Endpunkte auf HMAC-Verifizierung · Telegram · Discord · Slack</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">Channel Input Sanitization</div><div class="card-desc">Eingehende Nachrichten durch einheitlichen Sanitizer · Zod-Schema pro Channel</div><span class="card-tag tag-channels">Channels</span></div>
+  <div class="card"><div class="card-label">Channel Isolation</div><div class="card-desc">Channel-Fehler isolieren · ein fehlerhafter Channel darf Gateway nicht destabilisieren</div><span class="card-tag tag-channels">Channels</span></div>
+  <div class="card"><div class="card-label">Token Rotation API</div><div class="card-desc">Channel-Tokens ohne Gateway-Neustart rotieren · Graceful credential handover</div><span class="card-tag tag-channels">Channels</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 6: Pentest Infrastructure -->
+<div class="phase-header p6">
+  <div>
+    <span class="phase-badge">Phase 6 — Geplant</span>
+    <div class="phase-title">Pentest Infrastructure</div>
+    <div class="phase-sub">phone-control · Reporting · Tooling · Workflow-Automatisierung</div>
+    <span class="phase-status status-planned">Geplant · Konzeptphase</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card"><div class="card-label">phone-control Integration</div><div class="card-desc">Camera · Screen · Writes · All — ARM-Gruppen für kontrollierte Testumgebungen</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">Pentest Report Generation</div><div class="card-desc">Strukturierte Findings · Severity-Klassifizierung · Exportformate · OTel als Audit Trail</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card"><div class="card-label">Memory für Pentest-Kontext</div><div class="card-desc">LanceDB speichert Targets · Erkenntnisse · Vorgehensweisen über Sessions hinweg</div><span class="card-tag tag-memory">Memory</span></div>
+  <div class="card"><div class="card-label">Scope &amp; Konzept</div><div class="card-desc">Detaillierte Planung steht noch aus · phone-control als mögliche Basis</div><div class="card-note-warn">Offen · anderes Projekt im Hintergrund</div><span class="card-tag tag-infra">Infra</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Info Box -->
+<div class="info-box">
+  <h3>Projekt-Philosophie</h3>
+  <p>OpenClaw wird nach dem Prinzip <strong>Security First</strong> weiterentwickelt. Jede architektonische Entscheidung wird per ADR dokumentiert. <strong>Platform: Windows + Linux. Enterprise Grade bedeutet: vollständige Nachvollziehbarkeit, minimale Angriffsfläche, keine stillen Fehler.</strong> Memory/RAG über LanceDB ermöglicht einen Assistenten der lernt und sich erinnert — Basis für alle weiteren Ausbaustufen.</p>
+</div>
+
+</body>
+</html>

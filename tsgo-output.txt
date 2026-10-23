@@ -1,0 +1,9 @@
+npm warn Unknown project config "node-linker". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> openclaw@2026.4.19-beta.2 tsgo J:\Eigenes OpenClaw\openclaw-main\openclaw-main
+> pnpm tsgo:core
+
+
+> openclaw@2026.4.19-beta.2 tsgo:core J:\Eigenes OpenClaw\openclaw-main\openclaw-main
+> node scripts/run-tsgo.mjs -p tsconfig.core.json --incremental --tsBuildInfoFile .artifacts/tsgo-cache/core.tsbuildinfo
+

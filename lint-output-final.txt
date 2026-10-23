@@ -1,0 +1,10 @@
+npm warn Unknown project config "node-linker". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> openclaw@2026.4.19-beta.2 lint J:\Eigenes OpenClaw\openclaw-main\openclaw-main
+> node scripts/run-oxlint.mjs
+
+[plugin-sdk boundary dts] fresh; skipping
+[plugin-sdk package boundary dts] fresh; skipping
+[plugin-sdk boundary root shims] fresh; skipping
+Found 0 warnings and 0 errors.
+Finished in 11.8s on 8081 files with 159 rules using 12 threads.

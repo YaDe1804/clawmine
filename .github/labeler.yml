@@ -1,0 +1,209 @@
+"channel: voice-call":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/voice-call/**"
+
+"app: android":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/android/**"
+          - "docs/platforms/android.md"
+"app: web-ui":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "ui/**"
+          - "src/gateway/control-ui.ts"
+          - "src/gateway/control-ui-shared.ts"
+          - "src/gateway/protocol/**"
+          - "src/gateway/server-methods/chat.ts"
+          - "src/infra/control-ui-assets.ts"
+
+"gateway":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/gateway/**"
+          - "src/daemon/**"
+          - "docs/gateway/**"
+
+"docs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "docs.acp.md"
+
+"edition-template":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "edition-template/**"
+
+"cli":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/cli/**"
+
+"commands":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/commands/**"
+
+"scripts":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "scripts/**"
+
+"docker":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "Dockerfile"
+          - "Dockerfile.*"
+          - ".dockerignore"
+          - "scripts/docker/setup.sh"
+          - "scripts/podman/setup.sh"
+          - "scripts/**/*docker*"
+          - "scripts/**/Dockerfile*"
+          - "scripts/sandbox-*.sh"
+          - "src/agents/sandbox*.ts"
+          - "src/commands/sandbox*.ts"
+          - "src/cli/sandbox-cli.ts"
+          - "src/docker-setup.test.ts"
+          - "src/config/**/*sandbox*"
+          - "docs/cli/sandbox.md"
+          - "docs/gateway/sandbox*.md"
+          - "docs/install/docker.md"
+          - "docs/multi-agent-sandbox-tools.md"
+
+"agents":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/agents/**"
+
+"security":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/cli/security.md"
+          - "docs/gateway/security.md"
+
+"extensions: acpx":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/acpx/**"
+"extensions: active-memory":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/active-memory/**"
+"extensions: comfy":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/comfy/**"
+"extensions: device-pair":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/device-pair/**"
+"extensions: diagnostics-otel":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/diagnostics-otel/**"
+"extensions: diffs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/diffs/**"
+"extensions: duckduckgo":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/duckduckgo/**"
+"extensions: image-generation-core":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/image-generation-core/**"
+"extensions: litellm":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/litellm/**"
+"extensions: llm-task":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/llm-task/**"
+"extensions: lmstudio":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/lmstudio/**"
+"extensions: lobster":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/lobster/**"
+"extensions: media-understanding-core":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/media-understanding-core/**"
+"extensions: memory-core":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/memory-core/**"
+"extensions: memory-lancedb":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/memory-lancedb/**"
+"extensions: memory-wiki":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/memory-wiki/**"
+"extensions: nvidia":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/nvidia/**"
+"extensions: ollama":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/ollama/**"
+"extensions: open-prose":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/open-prose/**"
+"extensions: openshell":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/openshell/**"
+"extensions: phone-control":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/phone-control/**"
+"extensions: sglang":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/sglang/**"
+"extensions: shared":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/shared/**"
+"extensions: speech-core":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/speech-core/**"
+"extensions: synthetic":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/synthetic/**"
+"extensions: talk-voice":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/talk-voice/**"
+"extensions: thread-ownership":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/thread-ownership/**"
+"extensions: video-generation-core":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/video-generation-core/**"
+"extensions: vllm":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/vllm/**"
+"extensions: voice-call":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/voice-call/**"
+"extensions: webhooks":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/webhooks/**"

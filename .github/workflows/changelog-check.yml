@@ -1,0 +1,46 @@
+name: Changelog Check
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - ".github/**"
+
+permissions:
+  contents: read
+
+jobs:
+  changelog-check:
+    name: Changelog entry present
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Check for Unreleased entry
+        run: |
+          if ! grep -q "^## Unreleased" CHANGELOG.md; then
+            echo "::error::No Unreleased section in CHANGELOG.md"
+            exit 1
+          fi
+
+          UNRELEASED=$(awk '
+            /^## Unreleased/ { capture=1; next }
+            /^## / && capture { exit }
+            capture && /^- / { count++ }
+            END { print count + 0 }
+          ' CHANGELOG.md)
+
+          if [ "$UNRELEASED" -eq 0 ]; then
+            echo "::error::No entries under Unreleased in CHANGELOG.md"
+            echo "Add an entry with one of:"
+            echo "  pnpm changelog:add:change 'Your change'"
+            echo "  pnpm changelog:add:fix 'Your fix'"
+            echo "  pnpm changelog:add:breaking 'Your breaking change'"
+            exit 1
+          fi
+
+          echo "Found $UNRELEASED unreleased changelog entries"

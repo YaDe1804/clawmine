@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw — Roadmap v3</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f1117;
+    color: #d3d1c7;
+    padding: 2rem;
+    line-height: 1.6;
+  }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; color: #f0ede6; }
+  .subtitle { font-size: 14px; color: #73726c; margin-bottom: 2rem; }
+
+  .stack-status { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; }
+  .stack-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    border: 0.5px solid #3a3a36; color: #9c9a92;
+    display: flex; align-items: center; gap: 5px; background: #1a1a1f;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot-active   { background: #5DCAA5; }
+  .dot-next     { background: #7F77DD; }
+  .dot-security { background: #DD4444; }
+  .dot-planned  { background: #3a3a50; }
+
+  .section-label {
+    font-size: 11px; font-weight: 500; color: #5f5e5a;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+  }
+  .divider { border: none; border-top: 0.5px solid #2e2e2a; margin: 8px 0 24px; }
+
+  .phase-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .phase-badge {
+    font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 20px; white-space: nowrap; display: inline-block;
+  }
+  .p0 .phase-badge { background: #04342C; color: #5DCAA5; }
+  .p1 .phase-badge { background: #04342C; color: #5DCAA5; }
+  .p2 .phase-badge { background: #04342C; color: #5DCAA5; }
+  .pclean .phase-badge { background: #04342C; color: #5DCAA5; }
+  .p3 .phase-badge { background: #042C53; color: #85B7EB; }
+  .p4 .phase-badge { background: #26215C; color: #AFA9EC; }
+  .p5 .phase-badge { background: #412402; color: #FAC775; }
+  .p6 .phase-badge { background: #2e1a0a; color: #F0997B; }
+
+  .phase-title { font-size: 15px; font-weight: 500; color: #f0ede6; }
+  .phase-sub   { font-size: 12px; color: #73726c; margin-top: 2px; }
+  .phase-status { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; margin-top: 5px; display: inline-block; }
+  .status-done    { background: #04342C; color: #5DCAA5; }
+  .status-active  { background: #1a2030; color: #85B7EB; }
+  .status-next    { background: #26215C; color: #AFA9EC; }
+  .status-planned { background: #2e2e2a; color: #73726c; }
+  .status-debt    { background: #2e1a0a; color: #F0997B; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 8px; margin-bottom: 24px;
+  }
+  .card {
+    background: #1a1a1f; border: 0.5px solid #3a3a36;
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .card.done    { background: #0a1f18; border-color: #0F6E56; }
+  .card.done .card-label { color: #5DCAA5; }
+  .card.done .card-label::after { content: " ✓"; color: #1D9E75; font-size: 12px; }
+  .card.active  { background: #0d1826; border-color: #1a4a7a; }
+  .card.active .card-label { color: #85B7EB; }
+  .card.next    { background: #12122a; border-color: #3a3560; }
+  .card.next .card-label { color: #AFA9EC; }
+  .card.debt    { background: #1a1200; border-color: #5a4000; }
+  .card.debt .card-label { color: #F0997B; }
+  .card-label { font-size: 13px; font-weight: 500; color: #d3d1c7; margin-bottom: 5px; }
+  .card-desc  { font-size: 11px; color: #73726c; line-height: 1.5; }
+  .card-note  { font-size: 10px; color: #1D9E75; margin-top: 5px; font-style: italic; }
+  .card-note-warn { font-size: 10px; color: #EF9F27; margin-top: 5px; font-style: italic; }
+  .card-note-debt { font-size: 10px; color: #F0997B; margin-top: 5px; font-style: italic; }
+  .card-tag {
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    border-radius: 10px; margin-top: 8px; font-weight: 500;
+  }
+  .tag-security { background: #3a0a0a; color: #EF7777; }
+  .tag-infra    { background: #2e1a0a; color: #F0997B; }
+  .tag-quality  { background: #042C53; color: #85B7EB; }
+  .tag-gateway  { background: #04342C; color: #5DCAA5; }
+  .tag-channels { background: #26215C; color: #AFA9EC; }
+  .tag-dx       { background: #412402; color: #FAC775; }
+  .tag-memory   { background: #1a0a2e; color: #C084FC; }
+
+  .adr-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+  .adr-pill {
+    font-size: 10px; padding: 3px 9px; border-radius: 10px;
+    background: #1a1a1f; color: #73726c; border: 0.5px solid #3a3a36;
+  }
+  .adr-pill.done { background: #0a1f18; color: #5DCAA5; border-color: #0F6E56; }
+
+  .debt-box {
+    background: #1a1200; border: 0.5px solid #5a4000;
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px;
+  }
+  .debt-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 10px; color: #F0997B; }
+  .debt-box p  { color: #9c9a92; line-height: 1.6; margin-bottom: 6px; }
+  .debt-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 5px; }
+  .debt-dot { width: 6px; height: 6px; border-radius: 50%; background: #F0997B; margin-top: 5px; flex-shrink: 0; }
+  .debt-text { color: #9c9a92; line-height: 1.5; }
+
+  .info-box {
+    background: #0d1520; border: 0.5px solid #1a3a5a;
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px;
+  }
+  .info-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 10px; color: #85B7EB; }
+  .info-box p  { color: #9c9a92; line-height: 1.7; }
+  .info-box strong { color: #d3d1c7; }
+
+  @media print {
+    body { background: #0f1117; padding: 1.5rem; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw 🦞 — Roadmap</h1>
+<p class="subtitle">TypeScript · Node.js · AI Gateway + Memory/RAG · Windows + Linux · AntarBridge-ready · Stand: 25.04.2026 · v3.0</p>
+
+<!-- Tech Stack Pills -->
+<div class="section-label">Tech Stack</div>
+<div class="stack-status">
+  <div class="stack-pill"><span class="dot dot-active"></span> TypeScript / Node.js ESM</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> Gateway (HTTP + SSE)</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> Plugin SDK</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> SHA-gepinnte CI/CD Pipeline</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> memory-lancedb · bge-m3 · Ollama (lokal)</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> active-memory · Hybrid RAG</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> Ollama · LM Studio · vLLM · ComfyUI · NVIDIA NIM</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> Auth Rate Limiter (Sliding Window)</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> Prompt Injection Detection</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> CSP Hash-basiert (Script + Style)</div>
+  <div class="stack-pill"><span class="dot dot-security"></span> HSTS Default-on · kein Cloud-Zugriff</div>
+  <div class="stack-pill"><span class="dot dot-next"></span> AntarBridge (in Entwicklung)</div>
+  <div class="stack-pill"><span class="dot dot-planned"></span> TD-003 Build-Reparatur</div>
+  <div class="stack-pill"><span class="dot dot-active"></span> detect-secrets CI-Gate</div>
+</div>
+
+<!-- ADR Log -->
+<div class="section-label">ADR-Log</div>
+<div class="adr-list">
+  <span class="adr-pill done">ADR-001 GitHub Actions SHA-Pinning</span>
+  <span class="adr-pill done">ADR-002 CSP unsafe-inline Abschaffung</span>
+  <span class="adr-pill done">ADR-003 HSTS Default-on</span>
+  <span class="adr-pill done">ADR-004 Error Logging Strategie</span>
+  <span class="adr-pill">ADR-005 Dependency Audit Policy</span>
+  <span class="adr-pill done">ADR-006 Secret Scanning Integration</span>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 0: Baseline Audit -->
+<div class="phase-header p0">
+  <div>
+    <span class="phase-badge">Phase 0 — Abgeschlossen</span>
+    <div class="phase-title">Security &amp; Quality Baseline Audit</div>
+    <div class="phase-sub">Vollständiger Audit des bestehenden Codebases gegen Enterprise-Anforderungen</div>
+    <span class="phase-status status-done">Abgeschlossen · 22.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">Codebase-Analyse</div><div class="card-desc">15.000+ Dateien · Struktur, Tech Stack, Abhängigkeiten kartiert</div><div class="card-note">22.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Auth &amp; Rate Limiting</div><div class="card-desc">Sliding-Window · IP-Lockout · Scope-getrennte Zähler · loopback-exempt</div><div class="card-note">Solide ✓</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Prompt Injection Detection</div><div class="card-desc">15+ Patterns · kryptografische Boundary-Marker · externe Inhalte isoliert</div><div class="card-note">Enterprise-tauglich ✓</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">HTTP Security Headers</div><div class="card-desc">X-Content-Type-Options · Referrer-Policy · Permissions-Policy · X-Frame-Options</div><div class="card-note">Basis solide · Lücken dokumentiert</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Docker Security</div><div class="card-desc">Multi-Stage · SHA256-gepinnte Base Images · USER node · HEALTHCHECK</div><div class="card-note">Enterprise-tauglich ✓</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">SEQU-Initial erstellt</div><div class="card-desc">Vollständiger Security &amp; Quality Check · 0 Kritisch · 3 High · 4 Medium · 3 Low</div><div class="card-note">22.04.2026 · CONDITIONAL PASS</div><span class="card-tag tag-quality">Quality</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 1: Critical Security Fixes -->
+<div class="phase-header p1">
+  <div>
+    <span class="phase-badge">Phase 1 — Abgeschlossen</span>
+    <div class="phase-title">Critical Security Fixes</div>
+    <div class="phase-sub">Alle High-Severity Findings aus dem Baseline Audit geschlossen</div>
+    <span class="phase-status status-done">Abgeschlossen · 22.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">fix2.py + Root-Clutter</div><div class="card-desc">fix2.py · dream-diary-preview-v2/v3.html aus Root gelöscht</div><div class="card-note">22.04.2026</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card done"><div class="card-label">GitHub Actions SHA-Pinning</div><div class="card-desc">18 Workflows · 15 Actions auf SHA-Hashes gepinnt · ADR-001</div><div class="card-note">22.04.2026 · Supply Chain gesichert</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Zizmor Gates reaktiviert</div><div class="card-desc">unpinned-uses · excessive-permissions · artipacked — alle auf disable: false</div><div class="card-note">22.04.2026 · ADR-001</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">CSP unsafe-inline entfernt</div><div class="card-desc">computeInlineStyleHashes · style-src hash-basiert · kein unsafe-inline mehr · ADR-002</div><div class="card-note">22.04.2026 · Tests aktualisiert</div><span class="card-tag tag-security">Security</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 2: Hardening -->
+<div class="phase-header p2">
+  <div>
+    <span class="phase-badge">Phase 2 — Abgeschlossen</span>
+    <div class="phase-title">Security Hardening</div>
+    <div class="phase-sub">Medium-Severity Findings + Observability für Incident Response</div>
+    <span class="phase-status status-done">Abgeschlossen · 22.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">HSTS Default-on</div><div class="card-desc">max-age=63072000; includeSubDomains · nur bei TLS · opt-out via false · ADR-003</div><div class="card-note">22.04.2026</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Error Logging</div><div class="card-desc">23× catch(() => {}) → logger.debug() · unhandledRejection + uncaughtException Handler · ADR-004</div><div class="card-note">22.04.2026 · fs-safe.ts vollständig</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card done"><div class="card-label">Dockerfile Bun abgesichert</div><div class="card-desc">curl|bash entfernt · COPY --from=oven/bun:1 · kein Shell-Pipe mehr</div><div class="card-note">22.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Workflow-Permissions Audit</div><div class="card-desc">Alle Jobs via Zizmor excessive-permissions Gate geprüft</div><div class="card-note">22.04.2026</div><span class="card-tag tag-security">Security</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Platform + Extension + Root Cleanup -->
+<div class="phase-header pclean">
+  <div>
+    <span class="phase-badge">Cleanup — Abgeschlossen</span>
+    <div class="phase-title">Platform, Messenger &amp; Root Cleanup</div>
+    <div class="phase-sub">iOS/macOS · 22 Messenger-Channels · Docker/Deployment · Swift · Swabble · qa/</div>
+    <span class="phase-status status-done">Abgeschlossen · 25.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">iOS/macOS komplett entfernt</div><div class="card-desc">apps/ios/ · apps/macos/ · Workflows · Docs · AGENTS.md bereinigt</div><div class="card-note">22.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">22 Messenger-Extensions entfernt</div><div class="card-desc">discord · telegram · whatsapp · signal · slack · msteams · matrix · irc · u.v.m.</div><div class="card-note">25.04.2026 · AntarBridge kommt</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">QA-Extensions entfernt</div><div class="card-desc">qa-channel · qa-lab · qa-matrix · parity-gate.yml · Docs bereinigt</div><div class="card-note">22.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Root entschlackt</div><div class="card-desc">appcast.xml · fly.toml · render.yaml · docker-compose · Swabble/ · qa/ · .swiftformat · dmg-background · chrome-extension</div><div class="card-note">25.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">51 Cloud-Provider entfernt</div><div class="card-desc">openai · anthropic · google · alibaba · qwen · xai · mistral · elevenlabs · microsoft · codex · u.v.m. · nur lokale Provider bleiben</div><div class="card-note">25.04.2026 · Local Only Policy</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">8 macOS-Skills entfernt</div><div class="card-desc">apple-notes · apple-reminders · bear-notes · camsnap · things-mac · imsg · bluebubbles · peekaboo</div><div class="card-note">25.04.2026</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Enterprise Security Standards</div><div class="card-desc">AGENTS.md: Root-Policy · Actions-Pinning · CSP · Error Handling · ADR-Pflicht · AntarBridge · Local-Only Provider Policy</div><div class="card-note">25.04.2026 · Guardrails aktiv</div><span class="card-tag tag-dx">DX</span></div>
+  <div class="card debt"><div class="card-label">TD-003 · Build-Reparatur</div><div class="card-desc">pnpm build / tsgo / test produzieren Fehler · Kern referenziert gelöschte Provider/Channels · package.json exports/dependencies</div><div class="card-note-debt">Mittel · nächste Session · ~halber Tag</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card debt"><div class="card-label">TD-001/002 · QA Dead Code</div><div class="card-desc">~350 Dead-Code-Referenzen · postinstall-Hook referenziert qa-Plugins</div><div class="card-note-debt">Low · dedizierte Session</div><span class="card-tag tag-infra">Infra</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Tech Debt Box -->
+<div class="debt-box">
+  <h3>⚠ Technische Schuld</h3>
+  <p><strong>TD-001</strong> — ✅ <strong>Behoben 25.04.2026</strong> — 16 Dateien + 2 Verzeichnisse gelöscht · ~30 angepasst · 0 Treffer Grep.</p>
+  <p><strong>TD-002</strong> — ✅ <strong>Behoben 25.04.2026</strong></p>
+  <p><strong>TD-003</strong> — ✅ <strong>Behoben 25.04.2026</strong></p>
+  <p><strong>TD-004</strong> — ✅ <strong>Behoben 25.04.2026</strong></p>
+  <p><strong>TD-005</strong> — backup-verify.test.ts:314 · TS7031 impliziter Lambda-Param-Typ · vorbestehend · kleiner Fix.</p>
+  <div class="debt-row"><span class="debt-dot"></span><span class="debt-text">TD-005 · src/commands/backup-verify.test.ts:314 — TS7031 · expliziten Typ ergänzen · ~5 Minuten</span></div>
+  <div class="debt-row"><span class="debt-dot"></span><span class="debt-text">NON_PACKAGED_BUNDLED_PLUGIN_DIRS — leeres Set · API-Änderung · bewusst zurückgestellt</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 3: Quality -->
+<div class="phase-header p3">
+  <div>
+    <span class="phase-badge">Phase 3 — Abgeschlossen</span>
+    <div class="phase-title">Build-Reparatur · Memory Live · Code Quality</div>
+    <div class="phase-sub">TD-001–004 · memory-lancedb · Architecture Docs · Secret Scanning · Changelog</div>
+    <span class="phase-status status-done">Abgeschlossen · 25.04.2026</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">TD-003 Build-Reparatur</div><div class="card-desc">2 Build-Fehler + 14 TS-Fehler behoben · tsgo:all grün · 2 tote Live-Tests gelöscht · run-tsgo.mjs Windows-Fix</div><div class="card-note">25.04.2026 · build ✓ · tsgo ✓</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">TD-003 Follow-up</div><div class="card-desc">38 Test-Dateien gelöscht · 195 Contract-Tests grün · lint 0 Fehler · Docs bereinigt · run-oxlint.mjs Windows-Fix</div><div class="card-note">25.04.2026 · Contracts ✓ · lint ✓</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">memory-lancedb konfiguriert</div><div class="card-desc">Ollama · bge-m3 · LanceDB lokal · dim=1024 · Embedding-Probe ✓</div><div class="card-note">25.04.2026 · vollständig offline</div><span class="card-tag tag-memory">Memory</span></div>
+  <div class="card done"><div class="card-label">active-memory konfiguriert</div><div class="card-desc">agents: [main] · queryMode: recent · promptStyle: balanced · logging: true</div><div class="card-note">25.04.2026</div><span class="card-tag tag-memory">Memory</span></div>
+  <div class="card next"><div class="card-label">Gateway Live-Test</div><div class="card-desc">openclaw gateway starten · /verbose on · erstes Memory einspeisen · Recall testen · *.lance Dateien prüfen</div><div class="card-note-warn">Nächster Schritt · manuell</div><span class="card-tag tag-gateway">Gateway</span></div>
+  <div class="card done"><div class="card-label">TD-004 · Test-Failures</div><div class="card-desc">23 Failures behoben · Windows-Pfade · Timeouts · Channel-Mocks ersetzt · rmTempHomeWithWindowsRetry</div><div class="card-note">25.04.2026 · pnpm test grün</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Secret Scanning CI</div><div class="card-desc">detect-secrets CI-Gate · pre-commit Hook · ADR-006 · Baseline lokal noch generieren</div><div class="card-note">25.04.2026 · Baseline ausstehend</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">TD-001 Dead Code</div><div class="card-desc">16 Dateien + 2 Verzeichnisse gelöscht · ~30 Dateien angepasst · 0 Treffer Verifikations-Grep · tsgo grün</div><div class="card-note">25.04.2026 · QA vollständig entfernt</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Architecture Docs</div><div class="card-desc">docs/architecture/overview.md · index.md · Gateway Architecture aktualisiert · Navigation in docs.json</div><div class="card-note">25.04.2026 · kein WhatsApp/macOS mehr</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card done"><div class="card-label">Changelog Automation</div><div class="card-desc">changelog-check.yml CI-Gate · pnpm changelog:add Scripts · AGENTS.md Policy · iOS Scripts entfernt</div><div class="card-note">25.04.2026 · erster Eintrag committed</div><span class="card-tag tag-dx">DX</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 4: Enterprise Features -->
+<div class="phase-header p4">
+  <div>
+    <span class="phase-badge">Phase 4 — Aktiv</span>
+    <div class="phase-title">Gateway Enterprise Features</div>
+    <div class="phase-sub">Observability · High Availability · Audit Trail</div>
+    <span class="phase-status status-active">Aktiv · nächste Phase</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">OpenTelemetry / diagnostics-otel</div><div class="card-desc">Grafana + Tempo + Prometheus + Loki · lokal · 127.0.0.1 · OTLP HTTP · Audit Trail</div><div class="card-note">25.04.2026 · Docker Desktop Start ausstehend</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">Metrics Endpoint</div><div class="card-desc">/metrics loopback-only · Prometheus text · OTel Counters · auth.failure · http.requests · 16+22 Tests grün</div><div class="card-note">25.04.2026 · :18789/metrics + :9464 OTel</div><span class="card-tag tag-gateway">Gateway</span></div>
+  <div class="card"><div class="card-label">Distributed Rate Limiting</div><div class="card-desc">Redis-backed Rate Limiter für Multi-Instance · In-Memory bleibt Fallback</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card done"><div class="card-label">Health Check API</div><div class="card-desc">/health/details · loopback-only · voller Snapshot · uptime · gateway-Metadaten · 13 Tests grün</div><div class="card-note">25.04.2026 · tsgo ✓ · tests ✓</div><span class="card-tag tag-gateway">Gateway</span></div>
+  <div class="card done"><div class="card-label">Audit Log</div><div class="card-desc">JSONL · audit.log · gateway.start · auth.failure · auth.lockout · dangerous_flag · injection.detected · 5 Tests grün</div><div class="card-note">25.04.2026 · ~/.openclaw/audit.log</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">TD-001 QA Dead Code</div><div class="card-desc">Vollständige Kaskaden-Bereinigung der QA-Referenzen im Core · ~1–2 Tage Aufwand</div><span class="card-tag tag-infra">Infra</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 5: AntarBridge Integration -->
+<div class="phase-header p5">
+  <div>
+    <span class="phase-badge">Phase 5 — Geplant</span>
+    <div class="phase-title">AntarBridge Integration</div>
+    <div class="phase-sub">Sicherer Messaging-Layer · Channel Adapter · Webhook-Härtung</div>
+    <span class="phase-status status-planned">Geplant · abhängig von AntarBridge-Entwicklung</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card"><div class="card-label">AntarBridge Channel Adapter</div><div class="card-desc">OpenClaw-Extension für AntarBridge · saubere Channel-API · kein Messenger-Lock-in</div><span class="card-tag tag-channels">Channels</span></div>
+  <div class="card"><div class="card-label">Webhook HMAC Härtung</div><div class="card-desc">AntarBridge-Webhooks mit HMAC-Verifizierung absichern · Replay-Protection</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">Channel Isolation</div><div class="card-desc">AntarBridge-Fehler isolieren · Gateway bleibt stabil bei Channel-Ausfall</div><span class="card-tag tag-channels">Channels</span></div>
+  <div class="card"><div class="card-label">Token Rotation API</div><div class="card-desc">AntarBridge-Tokens ohne Gateway-Neustart rotieren · Graceful credential handover</div><span class="card-tag tag-channels">Channels</span></div>
+  <div class="card"><div class="card-label">Input Sanitization</div><div class="card-desc">Eingehende AntarBridge-Nachrichten durch Sanitizer · Zod-Schema · Prompt-Injection-Guard</div><span class="card-tag tag-security">Security</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Phase 6: Edition Architecture + Pentest -->
+<div class="phase-header p6">
+  <div>
+    <span class="phase-badge">Phase 6 — Aktiv</span>
+    <div class="phase-title">Edition-Architektur + OpenPentest</div>
+    <div class="phase-sub">API-First · separate Repos · OpenPentest · OpenDeveloper · OpenImage · OpenVideo · OpenLotto</div>
+    <span class="phase-status status-active">Aktiv · ADR-007 accepted</span>
+  </div>
+</div>
+<div class="cards">
+  <div class="card done"><div class="card-label">ADR-007 — Edition-Architektur</div><div class="card-desc">API-First · vollständige Entkopplung · separate Repos · beliebige Technologie · Gateway-API als Vertrag</div><div class="card-note">25.04.2026 · Option C accepted</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card done"><div class="card-label">Edition Template</div><div class="card-desc">Python · Gateway v3 Protokoll · WebSocket + HTTP Client · ruff ✓ · compileall ✓</div><div class="card-note">25.04.2026 · Basis für alle Editions</div><span class="card-tag tag-dx">DX</span></div>
+  <div class="card done"><div class="card-label">OpenLotto Edition</div><div class="card-desc">Scraper (lotto649/euro/keno) · Supabase Client · Statistics Analyzer · BackgroundScheduler · CustomTkinter GUI · 2 Tests grün</div><div class="card-note">25.04.2026 · Selektoren noch anzupassen</div><span class="card-tag tag-memory">Memory</span></div>
+  <div class="card next"><div class="card-label">Core Snapshot taggen</div><div class="card-desc">git tag v2026.4.25-phase3-complete · Baseline für alle Editions</div><div class="card-note-warn">Ausstehend · 2 Minuten · du</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card"><div class="card-label">OpenPentest Edition</div><div class="card-desc">phone-control · Reporting · Scope-Management · Audit Trail · Memory-Kontext über Sessions</div><span class="card-tag tag-security">Security</span></div>
+  <div class="card"><div class="card-label">OpenDeveloper Edition</div><div class="card-desc">Code-Analyse · openshell · Git-Tools · Developer-Workflows</div><span class="card-tag tag-quality">Quality</span></div>
+  <div class="card"><div class="card-label">OpenImage Edition</div><div class="card-desc">ComfyUI Bildgenerierung · Prompt-Workflows · lokale Inferenz</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card"><div class="card-label">OpenVideo Edition</div><div class="card-desc">ComfyUI Videogenerierung · Rendering-Pipelines · lokale Inferenz</div><span class="card-tag tag-infra">Infra</span></div>
+  <div class="card done"><div class="card-label">OpenLotto Edition</div><div class="card-desc">Scraper · Supabase · Statistics Analyzer · BackgroundScheduler · CustomTkinter GUI · ruff ✓ · 2 Tests ✓</div><div class="card-note">25.04.2026 · Selektoren pending</div><span class="card-tag tag-memory">Memory</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- Info Box -->
+<div class="info-box">
+  <h3>Projekt-Philosophie</h3>
+  <p>OpenClaw ist ein <strong>reines AI-Gateway + Memory/RAG Backend</strong> — keine eingebauten Messenger. Messaging läuft über <strong>AntarBridge</strong> (eigene Entwicklung, in Arbeit). Embedding und Memory vollständig lokal über Ollama/bge-m3 — keine Cloud-APIs, keine externen Abhängigkeiten. <strong>Platform: Windows + Linux. Security First. Enterprise Grade.</strong></p>
+</div>
+
+</body>
+</html>

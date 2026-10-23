@@ -1,0 +1,15 @@
+# zizmor configuration
+# https://docs.zizmor.sh/configuration/
+
+rules:
+  # Enforce SHA-pinned uses: references across all workflows.
+  unpinned-uses:
+    disable: false
+
+  # Enforce least-privilege permissions blocks per workflow/job.
+  excessive-permissions:
+    disable: false
+
+  # Enforce persist-credentials: false where appropriate.
+  artipacked:
+    disable: false

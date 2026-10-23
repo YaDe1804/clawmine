@@ -1,0 +1,10 @@
+npm warn Unknown project config "node-linker". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+ RUN  v4.1.4 J:/Eigenes OpenClaw/openclaw-main/openclaw-main
+
+
+ Test Files  45 passed (45)
+      Tests  195 passed (195)
+   Start at  11:23:45
+   Duration  6.86s (transform 12.62s, setup 755ms, import 10.81s, tests 20.53s, environment 6ms)
+
